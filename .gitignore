@@ -27,3 +27,11 @@ migrate_working_dir/
 **/doc/api/
 .dart_tool/
 build/
+
+example/android/
+example/ios/
+example/build/
+example/linux/
+example/macos/
+example/web/
+example/windows/
