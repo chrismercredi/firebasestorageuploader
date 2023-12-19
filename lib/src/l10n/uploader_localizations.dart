@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 // You need to generate the localizations using:
-// dart run intl_translation:extract_to_arb --output-dir=lib/uploader/l10n lib/uploader/l10n/uploader_localizations.dart
+// dart run intl_translation:extract_to_arb --output-dir=lib/src/l10n lib/src/l10n/uploader_localizations.dart
 //
 // Then you need to run:
 //
-// dart run intl_translation:generate_from_arb --output-dir=lib/uploader/l10n --no-use-deferred-loading lib/uploader/l10n/uploader_localizations.dart lib/uploader/l10n/intl_en.arb lib/uploader/l10n/intl_es.arb
+// dart run intl_translation:generate_from_arb --output-dir=lib/src/l10n --no-use-deferred-loading lib/src/l10n/uploader_localizations.dart lib/src/l10n/intl_en.arb lib/src/l10n/intl_es.arb
 
 import 'messages_all.dart';
 
