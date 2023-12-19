@@ -42,3 +42,10 @@ build/
 /linux/
 /windows/
 /macos/
+
+/example/storage.rules
+/example/firebase.json
+/example/.firebaserc
+/example/lib/firebase_options.dart
+
+*env.dart
