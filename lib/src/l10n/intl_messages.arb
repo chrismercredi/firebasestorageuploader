@@ -1,0 +1,135 @@
+{
+  "@@last_modified": "2023-10-21T20:19:41.426545",
+  "bytes": "Bytes",
+  "@bytes": {
+    "description": "The term for bytes in file size",
+    "type": "text",
+    "placeholders": {}
+  },
+  "kilobytes": "KB",
+  "@kilobytes": {
+    "description": "The term for kilobytes in file size",
+    "type": "text",
+    "placeholders": {}
+  },
+  "megabytes": "MB",
+  "@megabytes": {
+    "description": "The term for megabytes in file size",
+    "type": "text",
+    "placeholders": {}
+  },
+  "gigabytes": "GB",
+  "@gigabytes": {
+    "description": "The term for gigabytes in file size",
+    "type": "text",
+    "placeholders": {}
+  },
+  "terabytes": "TB",
+  "@terabytes": {
+    "description": "The term for terabytes in file size",
+    "type": "text",
+    "placeholders": {}
+  },
+  "calculatingFileSize": "Calculating...",
+  "@calculatingFileSize": {
+    "description": "Text displayed while calculating file size",
+    "type": "text",
+    "placeholders": {}
+  },
+  "filePathLabel": "Path",
+  "@filePathLabel": {
+    "description": "Label for displaying file path",
+    "type": "text",
+    "placeholders": {}
+  },
+  "fileTypeLabel": "Type",
+  "@fileTypeLabel": {
+    "description": "Label for displaying file type",
+    "type": "text",
+    "placeholders": {}
+  },
+  "fileSizeLabel": "Size",
+  "@fileSizeLabel": {
+    "description": "Label for displaying file size",
+    "type": "text",
+    "placeholders": {}
+  },
+  "selectFilesButtonLabel": "Select Files",
+  "@selectFilesButtonLabel": {
+    "description": "Label for the button that opens the file picker",
+    "type": "text",
+    "placeholders": {}
+  },
+  "noFilesSelectedTitle": "No files selected yet",
+  "@noFilesSelectedTitle": {
+    "description": "Title text for the state where no files have been selected",
+    "type": "text",
+    "placeholders": {}
+  },
+  "pickFilesToStartSubtitle": "Pick some files to get started",
+  "@pickFilesToStartSubtitle": {
+    "description": "Subtitle text encouraging the user to pick files",
+    "type": "text",
+    "placeholders": {}
+  },
+  "selectMoreFilesButtonLabel": "Select More Files",
+  "@selectMoreFilesButtonLabel": {
+    "description": "Label for the button that allows selecting more files",
+    "type": "text",
+    "placeholders": {}
+  },
+  "uploadFilesButtonLabel": "Upload Files",
+  "@uploadFilesButtonLabel": {
+    "description": "Label for the button that initiates file upload",
+    "type": "text",
+    "placeholders": {}
+  },
+  "uploadingFile": "Uploading",
+  "@uploadingFile": {
+    "description": "Prefix text for displaying the file being uploaded",
+    "type": "text",
+    "placeholders": {}
+  },
+  "uploadError": "Something went wrong!",
+  "@uploadError": {
+    "description": "Text displayed when an error occurs during file upload",
+    "type": "text",
+    "placeholders": {}
+  },
+  "uploadComplete": "Upload complete!",
+  "@uploadComplete": {
+    "description": "Text displayed when file upload is complete",
+    "type": "text",
+    "placeholders": {}
+  },
+  "waitingToUpload": "Waiting to start upload...",
+  "@waitingToUpload": {
+    "description": "Text displayed while waiting to start file upload",
+    "type": "text",
+    "placeholders": {}
+  },
+  "uploading": "Uploading",
+  "@uploading": {
+    "description": "Text displayed during file upload",
+    "type": "text",
+    "placeholders": {}
+  },
+  "userNotAuthenticated": "User not authenticated",
+  "@userNotAuthenticated": {
+    "description": "Message displayed when the user is not authenticated in UploaderWidget",
+    "type": "text",
+    "placeholders": {}
+  },
+  "fileUploaderTitle": "File uploader",
+  "@fileUploaderTitle": {
+    "description": "Title for the file uploader in UploaderView",
+    "type": "text",
+    "placeholders": {}
+  },
+  "supportedFileTypes": "Supported file types: png, jpg, pdf, docx, xlsx",
+  "@supportedFileTypes": {
+    "description": "Subtitle text listing supported file types in UploaderView",
+    "type": "text",
+    "placeholders": {}
+  }
+}
