@@ -19,7 +19,7 @@ class SelectedFilesStateWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SelectedFilesList(selectedFiles: selectedFiles),
+        const SelectedFilesList(),
         UploadFilesButton(onPressed: onUploadFiles),
       ],
     );

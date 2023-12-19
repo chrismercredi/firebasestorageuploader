@@ -3,7 +3,6 @@ import 'package:example/env.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebasestoragemanager/firebasestoragemanager.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // ignore:depend_on_referenced_packages
@@ -34,7 +33,6 @@ class MyApp extends StatelessWidget {
         localizationsDelegates: const [
           UploaderLocalizationsDelegate(),
         ],
-        title: 'Firebase Storage Manager',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
@@ -55,15 +53,9 @@ class UploaderPage extends StatelessWidget {
       return const SignInPage();
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Firebase Storage Manager'),
-      ),
+    return const Scaffold(
       body: Center(
-        child: UploaderView(
-          user: user,
-          isWeb: kIsWeb,
-        ),
+        child: FireBaseStorageManager(),
       ),
     );
   }

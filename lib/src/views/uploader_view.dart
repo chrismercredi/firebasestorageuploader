@@ -3,7 +3,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../l10n/uploader_localizations.dart';
 import '../src.dart';
 
 /// A widget that provides an interface for uploading files.
@@ -48,7 +47,7 @@ class UploaderView extends StatelessWidget {
         builder: (context, state) {
           // Based on the current state, return the appropriate widget.
           if (state is UploaderInitial) {
-            return SelectFilesStateWidget(
+            return NoFilesSelectedWidget(
               onSelectFiles: () =>
                   context.read<UploaderCubit>().openMultipleFiles(),
             );

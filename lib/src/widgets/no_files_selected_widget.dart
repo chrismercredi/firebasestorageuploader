@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../l10n/uploader_localizations.dart';
 import '../src.dart';
 
 /// A widget representing the state where files can be selected.
-class SelectFilesStateWidget extends StatelessWidget {
+class NoFilesSelectedWidget extends StatelessWidget {
   /// The function to execute to trigger file selection.
   final VoidCallback onSelectFiles;
 
-  /// Creates a new instance of [SelectFilesStateWidget].
-  const SelectFilesStateWidget({super.key, required this.onSelectFiles});
+  /// Creates a new instance of [NoFilesSelectedWidget].
+  const NoFilesSelectedWidget({super.key, required this.onSelectFiles});
 
   @override
   Widget build(BuildContext context) {

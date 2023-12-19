@@ -1,3 +1,4 @@
+export 'bloc/bloc.dart';
 export 'cubit/cubit.dart';
 export 'extensions/extensions.dart';
 export 'l10n/l10n.dart';
