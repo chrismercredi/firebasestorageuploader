@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
 
-import '../l10n/uploader_localizations.dart';
-
 /// A widget that displays information about a selected file.
 ///
 /// This widget takes a [XFile] as input and displays its name, path (except on web),
