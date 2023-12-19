@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:keyedai/src/uploader/l10n/uploader_localizations.dart';
+
+import '../l10n/uploader_localizations.dart';
 
 /// Extension on [int] to provide file size formatting functionality.
 extension FileSize on int {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:keyedai/src/uploader/uploader.dart';
+
+import '../l10n/uploader_localizations.dart';
 
 /// A button widget that triggers file selection.
 class SelectFilesButton extends StatelessWidget {
