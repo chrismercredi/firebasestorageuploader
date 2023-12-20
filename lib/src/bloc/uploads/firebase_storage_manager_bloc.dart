@@ -6,8 +6,10 @@ import 'package:equatable/equatable.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebasestoragemanager/src/cubit/uploader_cubit.dart';
+// import 'package:firebasestoragemanager/src/cubit/uploader_cubit.dart';
 import 'package:mime/mime.dart';
+
+import '../../src.dart';
 
 part 'firebase_storage_manager_event.dart';
 part 'firebase_storage_manager_state.dart';
@@ -15,10 +17,8 @@ part 'firebase_storage_manager_state.dart';
 class FirebaseStorageManagerBloc
     extends Bloc<FirebaseStorageManagerEvent, FirebaseStorageManagerState> {
   final XTypeGroup typeGroup;
-  // ignore: prefer_final_fields
-  List<UploaderTaskInfo> _uploadTasks = [];
-  // ignore: prefer_final_fields
-  List<XFile> _selectedFiles = [];
+  final List<UploaderTaskInfo> _uploadTasks = [];
+  final List<XFile> _selectedFiles = [];
 
   FirebaseStorageManagerBloc({required this.typeGroup})
       : super(FirebaseStorageManagerInitial()) {
@@ -29,36 +29,29 @@ class FirebaseStorageManagerBloc
     on<FirebaseStorageClearAllTasks>(_onClearAllTasks);
   }
 
-  // Handler for clearing the selected files list
   void _onClearSelectedFiles(
     FirebaseStorageManagerClearSelectedFiles event,
     Emitter<FirebaseStorageManagerState> emit,
   ) {
-    _selectedFiles.clear();
+    _clearSelectedFiles();
     emit(FirebaseStorageManagerInitial());
   }
 
-  // Handler for removing a single selected file
   void _onRemoveSelectedFile(
     FirebaseStorageManagerRemoveSelectedFile event,
     Emitter<FirebaseStorageManagerState> emit,
   ) {
-    _selectedFiles = List.from(_selectedFiles)..remove(event.file);
-    if (_selectedFiles.isEmpty) {
-      emit(FirebaseStorageManagerInitial());
-    } else {
-      emit(FirebaseStorageManagerFilesSelected(_selectedFiles));
-    }
+    _removeSelectedFile(event.file);
+    emit(_selectedFiles.isEmpty
+        ? FirebaseStorageManagerInitial()
+        : FirebaseStorageManagerFilesSelected(_selectedFiles));
   }
 
   Future<void> _onClearAllTasks(
     FirebaseStorageClearAllTasks event,
     Emitter<FirebaseStorageManagerState> emit,
   ) async {
-    for (var task in _uploadTasks) {
-      await task.snapshot?.ref.delete();
-    }
-    _uploadTasks.clear();
+    await _clearAllUploadTasks();
     emit(FirebaseStorageManagerInitial());
   }
 
@@ -68,17 +61,10 @@ class FirebaseStorageManagerBloc
   ) async {
     try {
       final newFiles = await openFiles(acceptedTypeGroups: [typeGroup]);
-
-      // Combine old and new files, ensuring uniqueness by file path
-      final allFiles = {..._selectedFiles, ...newFiles}.toList();
-
-      // Update the selected files list
-      _selectedFiles = allFiles;
-
-      // Emit the state with the updated list of files
+      _updateSelectedFiles(newFiles);
       emit(FirebaseStorageManagerFilesSelected(_selectedFiles));
     } catch (e) {
-      print(e);
+      emit(FirebaseStorageManagerException('File selection failed: $e'));
     }
   }
 

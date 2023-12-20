@@ -22,6 +22,7 @@ dependencies:
   intl: ^0.18.1
   intl_translation: ^0.18.2
   mime: ^1.0.4
+  pointycastle: ^3.7.3
 
 dev_dependencies:
   flutter_test:

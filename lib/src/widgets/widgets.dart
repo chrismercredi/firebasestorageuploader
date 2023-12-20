@@ -1,4 +1,5 @@
 export 'clear_selected_files_button.dart';
+export 'file_grid_view.dart';
 export 'no_files_selected_widget.dart';
 export 'select_files_button.dart';
 export 'select_more_files_button.dart';

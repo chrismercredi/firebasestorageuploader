@@ -35,10 +35,11 @@ class UploaderView extends StatelessWidget {
           subtitle: Text(uploaderLocalizations.supportedFileTypes),
         ),
       ),
-      body: BlocConsumer<UploaderCubit, UploaderState>(
+      body:
+          BlocConsumer<FirebaseStorageManagerBloc, FirebaseStorageManagerState>(
         listener: (context, state) {
           // When the state is SnackbarMessenger, show a snackbar with the message.
-          if (state is SnackbarMessenger) {
+          if (state is FirebaseStorageManagerSnackbarMessenger) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
             );
@@ -46,26 +47,29 @@ class UploaderView extends StatelessWidget {
         },
         builder: (context, state) {
           // Based on the current state, return the appropriate widget.
-          if (state is UploaderInitial) {
+          if (state is FirebaseStorageManagerInitial) {
             return NoFilesSelectedWidget(
-              onSelectFiles: () =>
-                  context.read<UploaderCubit>().openMultipleFiles(),
+              onSelectFiles: () => context
+                  .read<FirebaseStorageManagerBloc>()
+                  .openMultipleFiles(),
             );
-          } else if (state is UploaderFilesSelected) {
+          } else if (state is FirebaseStorageManagerFilesSelected) {
             return SelectedFilesStateWidget(
               selectedFiles: state.files,
-              onUploadFiles: () =>
-                  context.read<UploaderCubit>().startUpload(isWeb, user),
+              onUploadFiles: () => context
+                  .read<FirebaseStorageManagerBloc>()
+                  .startUpload(isWeb, user),
             );
-          } else if (state is UploaderTasksInProgress ||
-              state is UploaderTasksSnapshot) {
+          } else if (state is FirebaseStorageManagerTasksInProgress ||
+              state is FirebaseStorageManagerTasksSnapshot) {
             List<UploadTask> uploadTasks = List<UploadTask>.from(
               (state as dynamic).tasks.map((e) => e.task),
             );
             return UploadingFilesStateWidget(
               uploadTasks: uploadTasks,
-              onSelectMoreFiles: () =>
-                  context.read<UploaderCubit>().openMultipleFiles(),
+              onSelectMoreFiles: () => context
+                  .read<FirebaseStorageManagerBloc>()
+                  .openMultipleFiles(),
             );
           } else {
             // For unsupported states, return an empty container.

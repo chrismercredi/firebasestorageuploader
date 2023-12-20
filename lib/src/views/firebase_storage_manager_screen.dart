@@ -76,7 +76,7 @@ class _FirebaseStorageManagerScreenState
             ),
       );
     } else {
-      return Container(); // For states not explicitly handled, return an empty container
+      return Container();
     }
   }
 

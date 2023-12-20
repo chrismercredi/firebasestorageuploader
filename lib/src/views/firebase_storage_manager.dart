@@ -1,10 +1,8 @@
 import 'package:file_selector/file_selector.dart';
-import 'package:firebasestoragemanager/src/bloc/firebase_storage_manager_bloc.dart';
-import 'package:firebasestoragemanager/src/repositories/files_repository.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'views.dart';
+import '../src.dart';
 
 class FireBaseStorageManager extends StatelessWidget {
   const FireBaseStorageManager({super.key});
@@ -32,12 +30,30 @@ class FireBaseStorageManager extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider(
-      create: (context) => FilesRepository(),
-      child: BlocProvider(
-        create: (BuildContext context) =>
-            FirebaseStorageManagerBloc(typeGroup: typeGroup),
-        child: const FirebaseStorageManagerScreen(),
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider(
+          create: (context) => FirebaseStorageUploaderRepository(),
+        ),
+        RepositoryProvider(
+          create: (context) => FirebaseStorageBucketRepository(),
+        ),
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (BuildContext context) =>
+                FirebaseStorageManagerBloc(typeGroup: typeGroup),
+          ),
+          BlocProvider(
+            create: (context) => FirebaseBucketManagerBloc(
+                repository: FirebaseStorageBucketRepository())
+              ..add(const FetchFiles()),
+          ),
+        ],
+        // TODO: Figure out the best way to display the screen's for uploads and buckets.
+        // child: const FirebaseStorageManagerScreen(),
+        child: const FileGridView(),
       ),
     );
   }
