@@ -2,6 +2,7 @@ import 'package:example/app_bloc_observer.dart';
 import 'package:example/env.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebasestoragemanager/firebasestoragemanager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,17 +27,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => UploaderCubit(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        localizationsDelegates: const [
-          UploaderLocalizationsDelegate(),
-        ],
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
+    return RepositoryProvider(
+      create: (context) => StorageManagerRepository(
+        firebaseStorage: FirebaseStorage.instance,
+      ),
+      child: BlocProvider(
+        create: (context) => StorageManagerBloc(
+          storageManagerRepository: context.read<StorageManagerRepository>(),
         ),
-        home: const UploaderPage(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          localizationsDelegates: const [
+            UploaderLocalizationsDelegate(),
+          ],
+          theme: ThemeData(
+            primarySwatch: Colors.pink,
+          ),
+          home: const UploaderPage(),
+        ),
       ),
     );
   }
@@ -55,7 +63,7 @@ class UploaderPage extends StatelessWidget {
 
     return const Scaffold(
       body: Center(
-        child: FireBaseStorageManager(),
+        child: FilePickerPage(),
       ),
     );
   }
