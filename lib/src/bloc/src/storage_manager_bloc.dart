@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:mime/mime.dart';
 
 import '../../src.dart';
 
@@ -12,90 +11,23 @@ part 'storage_manager_state.dart';
 
 class StorageManagerBloc
     extends Bloc<StorageManagerEvent, StorageManagerState> {
-  StorageManagerRepository storageManagerRepository;
-
-  // ignore: prefer_final_fields
+  final StorageManagerRepository storageManagerRepository;
   List<UploadTask> _uploadTasks = [];
 
-  StorageManagerBloc({
-    required this.storageManagerRepository,
-  }) : super(
-          StorageManagerInitial(),
-        ) {
-    on<PickFiles>(_onStorageManagerPickFiles);
+  StorageManagerBloc({required this.storageManagerRepository})
+      : super(StorageManagerInitial()) {
     on<ClearPickedFiles>(_onClearPickedFiles);
-    on<RemoveFileFromUploadList>(_onStorageManagerRemoveFileFromUploadList);
+    on<PickFiles>(_onStorageManagerPickFiles);
+    on<RemoveFileFromUploadList>(_removeFileFromUploadList);
     on<RemoveUploadTask>(_onRemoveUploadTask);
     on<UploadFromRawData>(_onUploadFromRawData);
   }
 
-  void _onUploadFromRawData(
-    UploadFromRawData event,
+  void _onClearPickedFiles(
+    ClearPickedFiles event,
     Emitter<StorageManagerState> emit,
   ) async {
-    final firebaseStorage = FirebaseStorage.instance;
-    final String uid = FirebaseAuth.instance.currentUser!.uid;
-    for (XFile file in event.files) {
-      try {
-        // Get the file's MimeType
-        final mimeType = lookupMimeType(file.name);
-
-        // If the MimeType is null, throw an exception
-        if (mimeType == null) {
-          throw Exception("Unable to determine MIME type of the file");
-        }
-
-        // Create the file metadata
-        final metadata = SettableMetadata(
-          contentType: mimeType,
-          customMetadata: {
-            'picked-file-path': file.path,
-          },
-        );
-
-        UploadTask uploadTask;
-
-        // Build the storage path
-        final storagePath = 'users/$uid/uploads/${file.name}';
-
-        // Get the storage reference
-        final storageRef = firebaseStorage.ref();
-
-        // Read the file as bytes
-        final fileData = await file.readAsBytes();
-
-        uploadTask = storageRef.child(storagePath).putData(fileData, metadata);
-
-        _uploadTasks.add(uploadTask);
-      } catch (e) {
-        if (!emit.isDone) {
-          emit(
-            const UploadTaskError(message: 'Error uploading file'),
-          );
-        }
-      }
-    }
-    emit(UploadTasks(uploadTasks: _uploadTasks));
-  }
-
-  void _onRemoveUploadTask(
-    RemoveUploadTask event,
-    Emitter<StorageManagerState> emit,
-  ) async {
-    _uploadTasks.remove(event.task);
-    if (!emit.isDone) {
-      if (_uploadTasks.isEmpty) {
-        emit(
-          StorageManagerInitial(),
-        );
-      } else {
-        emit(
-          UploadTasks(
-            uploadTasks: List.from(_uploadTasks),
-          ),
-        );
-      }
-    }
+    emit(StorageManagerInitial());
   }
 
   void _onStorageManagerPickFiles(
@@ -103,39 +35,42 @@ class StorageManagerBloc
     Emitter<StorageManagerState> emit,
   ) async {
     var files = await storageManagerRepository.pickFiles();
-    emit(
-      StorageManagerHasPickedFiles(
-        files: files,
-      ),
-    );
+    emit(HasPickedFiles(files: files));
   }
 
-  void _onStorageManagerRemoveFileFromUploadList(
+  void _removeFileFromUploadList(
     RemoveFileFromUploadList event,
     Emitter<StorageManagerState> emit,
   ) async {
-    final files = state as StorageManagerHasPickedFiles;
+    final files = state as HasPickedFiles;
     final newFiles =
         files.files.where((file) => file.path != event.file.path).toList();
-    if (newFiles.isEmpty) {
-      emit(
-        StorageManagerInitial(),
-      );
-      return;
-    }
-    emit(
-      StorageManagerHasPickedFiles(
-        files: newFiles,
-      ),
-    );
+    emit(newFiles.isEmpty
+        ? StorageManagerInitial()
+        : HasPickedFiles(files: newFiles));
   }
 
-  void _onClearPickedFiles(
-    ClearPickedFiles event,
+  void _onRemoveUploadTask(
+    RemoveUploadTask event,
+    Emitter<StorageManagerState> emit,
+  ) {
+    _uploadTasks.remove(event.task);
+    emit(_uploadTasks.isEmpty
+        ? StorageManagerInitial()
+        : UploadTasks(uploadTasks: List.from(_uploadTasks)));
+  }
+
+  void _onUploadFromRawData(
+    UploadFromRawData event,
     Emitter<StorageManagerState> emit,
   ) async {
-    emit(
-      StorageManagerInitial(),
-    );
+    try {
+      String uid = FirebaseAuth.instance.currentUser!.uid;
+      _uploadTasks =
+          await storageManagerRepository.uploadFiles(event.files, uid);
+      emit(UploadTasks(uploadTasks: _uploadTasks));
+    } catch (e) {
+      emit(const UploadTaskError(message: 'Error uploading file'));
+    }
   }
 }

@@ -34,7 +34,7 @@ class FilePickerPage extends StatelessWidget {
   Widget _buildTopRowBasedOnState(
       StorageManagerState state, BuildContext context) {
     // Customize this method to return different widgets based on the state
-    if (state is StorageManagerHasPickedFiles) {
+    if (state is HasPickedFiles) {
       return Column(
         children: [
           Row(
@@ -58,7 +58,7 @@ class FilePickerPage extends StatelessWidget {
                         buttonText: 'Upload Single File',
                         onPressed: () async {
                           var file = context.read<StorageManagerBloc>().state
-                              as StorageManagerHasPickedFiles;
+                              as HasPickedFiles;
                           context.read<StorageManagerBloc>().add(
                                 UploadFromRawData(
                                   files: file.files,
@@ -77,7 +77,7 @@ class FilePickerPage extends StatelessWidget {
                         buttonText: 'Upload Multiple Files',
                         onPressed: () async {
                           var file = context.read<StorageManagerBloc>().state
-                              as StorageManagerHasPickedFiles;
+                              as HasPickedFiles;
                           context.read<StorageManagerBloc>().add(
                                 UploadFromRawData(
                                   files: file.files,
@@ -110,13 +110,13 @@ class FilePickerPage extends StatelessWidget {
   Widget _buildContentBasedOnState(
       StorageManagerState state, BuildContext context) {
     if (state is StorageManagerInitial ||
-        (state is StorageManagerHasPickedFiles && state.files.isEmpty)) {
+        (state is HasPickedFiles && state.files.isEmpty)) {
       return EmptyListWidget(
         onPickFiles: () {
           context.read<StorageManagerBloc>().add(PickFiles());
         },
       );
-    } else if (state is StorageManagerHasPickedFiles) {
+    } else if (state is HasPickedFiles) {
       return ListView.builder(
         itemCount: state.files.length,
         itemBuilder: (context, index) {

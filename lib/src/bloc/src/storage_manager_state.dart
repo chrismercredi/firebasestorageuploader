@@ -11,10 +11,10 @@ sealed class StorageManagerState extends Equatable {
 final class StorageManagerInitial extends StorageManagerState {}
 
 // Files have been picked
-final class StorageManagerHasPickedFiles extends StorageManagerState {
+final class HasPickedFiles extends StorageManagerState {
   final List<XFile> files;
 
-  const StorageManagerHasPickedFiles({required this.files});
+  const HasPickedFiles({required this.files});
 
   @override
   List<Object> get props => [files];

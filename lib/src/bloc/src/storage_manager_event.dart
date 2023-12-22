@@ -23,7 +23,7 @@ final class RemoveFileFromUploadList extends StorageManagerEvent {
 }
 
 final class RemoveUploadTask extends StorageManagerEvent {
-  final UploadTaskInfo task;
+  final UploadTask task;
 
   const RemoveUploadTask({
     required this.task,
