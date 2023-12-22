@@ -1,101 +1,106 @@
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebasestoragemanager/src/src.dart';
 import 'package:flutter/material.dart';
 
-/// A widget displaying the upload status of a file.
-///
-/// This widget is responsible for showing the current state of a file upload.
-/// It allows users to interact with the upload process by pausing, resuming,
-/// or canceling it. It also visually displays the upload's progress.
-///
-/// The widget uses a `StreamBuilder` to listen to `snapshotEvents` from
-/// the `UploadTask`. This ensures the UI updates in real-time as the upload
-/// progresses or changes state.
-///
-/// Example Usage:
-/// ```dart
-/// UploadTaskListTile(task: myUploadTask);
-/// ```
+/// Displays the current state of a single UploadTask.
 class UploadTaskListTile extends StatelessWidget {
-  /// The [UploadTask] associated with the file being uploaded.
-  final UploadTask task;
+  // ignore: public_member_api_docs
+  const UploadTaskListTile({
+    Key? key,
+    required this.task,
+    required this.onDismissed,
+    required this.onDownload,
+    required this.onDownloadLink,
+    required this.onDelete,
+  }) : super(key: key);
 
-  /// Creates an instance of [UploadTaskListTile].
-  ///
-  /// Requires an [UploadTask] which represents the ongoing file upload task.
-  const UploadTaskListTile({Key? key, required this.task}) : super(key: key);
+  /// The [UploadTask].
+  final UploadTask /*!*/ task;
+
+  /// Triggered when the user dismisses the task from the list.
+  final VoidCallback /*!*/ onDismissed;
+
+  /// Triggered when the user presses the download button on a completed upload task.
+  final VoidCallback /*!*/ onDownload;
+
+  /// Triggered when the user presses the "link" button on a completed upload task.
+  final VoidCallback /*!*/ onDownloadLink;
+
+  /// Triggered when the user presses the "delete" button on a completed upload task.
+  final VoidCallback /*!*/ onDelete;
+
+  /// Displays the current transferred bytes of the task.
+  String _bytesTransferred(TaskSnapshot snapshot) {
+    return '${snapshot.bytesTransferred}/${snapshot.totalBytes}';
+  }
 
   @override
   Widget build(BuildContext context) {
-    final uploaderLocalizations = UploaderLocalizations.of(context);
-
-    /// Formats the bytes transferred and total bytes into a readable string.
-    ///
-    /// This function takes in a [TaskSnapshot] and returns a formatted string
-    /// representing the amount of data transferred over the total size of the file.
-    String bytesTransferred(TaskSnapshot snapshot) {
-      return '${snapshot.bytesTransferred.fileSize(context)}/'
-          '${snapshot.totalBytes.fileSize(context)}';
-    }
-
+    print('UploadTaskListTile: ${task.hashCode}');
     return StreamBuilder<TaskSnapshot>(
       stream: task.snapshotEvents,
-      builder: (context, snapshot) {
-        String subtitle;
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<TaskSnapshot> asyncSnapshot,
+      ) {
+        Widget subtitle = const Text('---');
+        TaskSnapshot? snapshot = asyncSnapshot.data;
+        TaskState? state = snapshot?.state;
 
-        // Check for various states of the upload task
-        //and update the subtitle accordingly
-        if (snapshot.hasError) {
-          // Display an error message if the upload task encounters an error
-          subtitle = uploaderLocalizations.uploadError;
-        } else if (snapshot.connectionState == ConnectionState.done ||
-            snapshot.data?.bytesTransferred == snapshot.data?.totalBytes) {
-          // If the upload is complete or the uploaded bytes equal the total bytes,
-          //show a 'complete' message
-          subtitle = uploaderLocalizations.uploadComplete;
-        } else if (snapshot.connectionState == ConnectionState.waiting) {
-          // If waiting to start, show a 'waiting' message
-          subtitle = uploaderLocalizations.waitingToUpload;
-        } else {
-          // Otherwise, display an 'uploading' message with the amount of data transferred
-          subtitle =
-              '${uploaderLocalizations.uploading}: ${bytesTransferred(snapshot.data!)}';
+        if (asyncSnapshot.hasError) {
+          if (asyncSnapshot.error is FirebaseException &&
+              // ignore: cast_nullable_to_non_nullable
+              (asyncSnapshot.error as FirebaseException).code == 'canceled') {
+            subtitle = const Text('Upload canceled.');
+          } else {
+            // ignore: avoid_print
+            print(asyncSnapshot.error);
+            subtitle = const Text('Something went wrong.');
+          }
+        } else if (snapshot != null) {
+          subtitle = Text('$state: ${_bytesTransferred(snapshot)} bytes sent');
         }
 
-        // Get the file name from the upload task
-        String fileName = task.snapshot.ref.name;
-
-        // Build a ListTile widget to display the file name and upload status
-        return ListTile(
-          title: Text(fileName),
-          subtitle: Text(subtitle),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              // Display different icons based on the upload task's state
-              if (task.snapshot.state == TaskState.running)
-                IconButton(
-                  icon: const Icon(Icons.pause),
-                  onPressed: task
-                      .pause, // Pause the upload task when this button is pressed
-                ),
-              if (task.snapshot.state == TaskState.running)
-                IconButton(
-                  icon: const Icon(Icons.cancel),
-                  onPressed: task
-                      .cancel, // Cancel the upload task when this button is pressed
-                ),
-              if (task.snapshot.state == TaskState.paused)
-                IconButton(
-                  icon: const Icon(Icons.file_upload),
-                  onPressed: task
-                      .resume, // Resume the upload task when this button is pressed
-                ),
-              if (task.snapshot.state == TaskState.success)
-                const Icon(Icons.check_circle,
-                    color: Colors
-                        .green), // Show a success icon if the upload is complete
-            ],
+        return Dismissible(
+          key: Key(task.hashCode.toString()),
+          onDismissed: ($) => onDismissed(),
+          child: ListTile(
+            title: Text('Upload Task #${task.hashCode}'),
+            subtitle: subtitle,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                if (state == TaskState.running)
+                  IconButton(
+                    icon: const Icon(Icons.pause),
+                    onPressed: task.pause,
+                  ),
+                if (state == TaskState.running)
+                  IconButton(
+                    icon: const Icon(Icons.cancel),
+                    onPressed: task.cancel,
+                  ),
+                if (state == TaskState.paused)
+                  IconButton(
+                    icon: const Icon(Icons.file_upload),
+                    onPressed: task.resume,
+                  ),
+                if (state == TaskState.success)
+                  IconButton(
+                    icon: const Icon(Icons.file_download),
+                    onPressed: onDownload,
+                  ),
+                if (state == TaskState.success)
+                  IconButton(
+                    icon: const Icon(Icons.link),
+                    onPressed: onDownloadLink,
+                  ),
+                if (state == TaskState.success)
+                  IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: onDelete,
+                  ),
+              ],
+            ),
           ),
         );
       },

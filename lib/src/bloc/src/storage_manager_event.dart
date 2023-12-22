@@ -7,47 +7,14 @@ sealed class StorageManagerEvent extends Equatable {
   List<Object> get props => [];
 }
 
-final class StorageManagerPickFiles extends StorageManagerEvent {}
+final class PickFiles extends StorageManagerEvent {}
 
-final class StorageManagerUploadFromRawData extends StorageManagerEvent {
-  final List<XFile> files;
+final class ClearPickedFiles extends StorageManagerEvent {}
 
-  const StorageManagerUploadFromRawData({
-    required this.files,
-  });
-
-  @override
-  List<Object> get props => [files];
-}
-
-final class StorageManagerUploadSingleFromRawData extends StorageManagerEvent {
+final class RemoveFileFromUploadList extends StorageManagerEvent {
   final XFile file;
 
-  const StorageManagerUploadSingleFromRawData({
-    required this.file,
-  });
-
-  @override
-  List<Object> get props => [file];
-}
-
-final class StorageManagerUploadMultiFromRawData extends StorageManagerEvent {
-  final List<XFile> files;
-
-  const StorageManagerUploadMultiFromRawData({
-    required this.files,
-  });
-
-  @override
-  List<Object> get props => [files];
-}
-
-final class StorageManagerClearPickedFiles extends StorageManagerEvent {}
-
-final class StorageManagerRemoveFileFromUploadList extends StorageManagerEvent {
-  final XFile file;
-
-  const StorageManagerRemoveFileFromUploadList({
+  const RemoveFileFromUploadList({
     required this.file,
   });
 
@@ -64,4 +31,15 @@ final class RemoveUploadTask extends StorageManagerEvent {
 
   @override
   List<Object> get props => [task];
+}
+
+final class UploadFromRawData extends StorageManagerEvent {
+  final List<XFile> files;
+
+  const UploadFromRawData({
+    required this.files,
+  });
+
+  @override
+  List<Object> get props => [files];
 }

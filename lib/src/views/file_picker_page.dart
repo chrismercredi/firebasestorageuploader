@@ -1,8 +1,8 @@
-import 'package:firebasestoragemanager/firebasestoragemanager.dart';
-import 'package:firebasestoragemanager/src/views/file_upload_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+
+import '../src.dart';
 
 class FilePickerPage extends StatelessWidget {
   const FilePickerPage({Key? key}) : super(key: key);
@@ -34,7 +34,7 @@ class FilePickerPage extends StatelessWidget {
   Widget _buildTopRowBasedOnState(
       StorageManagerState state, BuildContext context) {
     // Customize this method to return different widgets based on the state
-    if (state is StorageManagerPickedFiles) {
+    if (state is StorageManagerHasPickedFiles) {
       return Column(
         children: [
           Row(
@@ -49,7 +49,7 @@ class FilePickerPage extends StatelessWidget {
                         buttonText: 'Cancel',
                         onPressed: () {
                           context.read<StorageManagerBloc>().add(
-                                StorageManagerClearPickedFiles(),
+                                ClearPickedFiles(),
                               );
                         },
                       ),
@@ -58,17 +58,17 @@ class FilePickerPage extends StatelessWidget {
                         buttonText: 'Upload Single File',
                         onPressed: () async {
                           var file = context.read<StorageManagerBloc>().state
-                              as StorageManagerPickedFiles;
+                              as StorageManagerHasPickedFiles;
                           context.read<StorageManagerBloc>().add(
-                                StorageManagerUploadSingleFromRawData(
-                                  file: file.files.first,
+                                UploadFromRawData(
+                                  files: file.files,
                                 ),
                               );
 
                           // Push FileUploadPage and wait for it to pop
                           await Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) => const FileUploadPage()),
+                                builder: (context) => const UploadTaskPage()),
                           );
                         },
                       ),
@@ -77,9 +77,9 @@ class FilePickerPage extends StatelessWidget {
                         buttonText: 'Upload Multiple Files',
                         onPressed: () async {
                           var file = context.read<StorageManagerBloc>().state
-                              as StorageManagerPickedFiles;
+                              as StorageManagerHasPickedFiles;
                           context.read<StorageManagerBloc>().add(
-                                StorageManagerUploadMultiFromRawData(
+                                UploadFromRawData(
                                   files: file.files,
                                 ),
                               );
@@ -87,7 +87,8 @@ class FilePickerPage extends StatelessWidget {
                           // Push FileUploadPage and wait for it to pop
                           await Navigator.of(context).push(
                             MaterialPageRoute(
-                                builder: (context) => const FileUploadPage()),
+                              builder: (context) => const UploadTaskPage(),
+                            ),
                           );
                         },
                       ),
@@ -109,13 +110,13 @@ class FilePickerPage extends StatelessWidget {
   Widget _buildContentBasedOnState(
       StorageManagerState state, BuildContext context) {
     if (state is StorageManagerInitial ||
-        (state is StorageManagerPickedFiles && state.files.isEmpty)) {
+        (state is StorageManagerHasPickedFiles && state.files.isEmpty)) {
       return EmptyListWidget(
         onPickFiles: () {
-          context.read<StorageManagerBloc>().add(StorageManagerPickFiles());
+          context.read<StorageManagerBloc>().add(PickFiles());
         },
       );
-    } else if (state is StorageManagerPickedFiles) {
+    } else if (state is StorageManagerHasPickedFiles) {
       return ListView.builder(
         itemCount: state.files.length,
         itemBuilder: (context, index) {
@@ -123,7 +124,7 @@ class FilePickerPage extends StatelessWidget {
             file: state.files[index],
             onDelete: () {
               context.read<StorageManagerBloc>().add(
-                    StorageManagerRemoveFileFromUploadList(
+                    RemoveFileFromUploadList(
                       file: state.files[index],
                     ),
                   );

@@ -1,4 +1,2 @@
 export 'file_picker_page.dart';
-export 'firebase_storage_manager.dart';
-export 'firebase_storage_manager_screen.dart';
-export 'uploader_view.dart';
+export 'upload_task_page.dart';

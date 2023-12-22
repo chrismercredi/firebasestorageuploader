@@ -11,80 +11,29 @@ sealed class StorageManagerState extends Equatable {
 final class StorageManagerInitial extends StorageManagerState {}
 
 // Files have been picked
-final class StorageManagerPickedFiles extends StorageManagerState {
+final class StorageManagerHasPickedFiles extends StorageManagerState {
   final List<XFile> files;
 
-  const StorageManagerPickedFiles({
-    required this.files,
-  });
+  const StorageManagerHasPickedFiles({required this.files});
 
   @override
   List<Object> get props => [files];
 }
 
-final class StorageManagerUploadTasks extends StorageManagerState {
-  final List<UploadTaskInfo> tasks;
-
-  const StorageManagerUploadTasks({
-    required this.tasks,
-  });
-
-  @override
-  List<Object> get props => [tasks];
-}
-
-final class StorageManagerUploadTaskPaused extends StorageManagerState {
-  final UploadTaskInfo taskInfo;
-
-  const StorageManagerUploadTaskPaused({
-    required this.taskInfo,
-  });
-
-  @override
-  List<Object> get props => [taskInfo];
-}
-
-final class StorageManagerUploadTaskResumed extends StorageManagerState {
-  final UploadTaskInfo taskInfo;
-
-  const StorageManagerUploadTaskResumed({
-    required this.taskInfo,
-  });
-
-  @override
-  List<Object> get props => [taskInfo];
-}
-
-final class StorageManagerUploadTaskComplete extends StorageManagerState {
-  final UploadTaskInfo taskInfo;
-
-  const StorageManagerUploadTaskComplete({
-    required this.taskInfo,
-  });
-
-  @override
-  List<Object> get props => [taskInfo];
-}
-
-final class StorageManagerUploadTaskError extends StorageManagerState {
+final class UploadTaskError extends StorageManagerState {
   final String message;
 
-  const StorageManagerUploadTaskError({
-    required this.message,
-  });
+  const UploadTaskError({required this.message});
 
   @override
   List<Object> get props => [message];
 }
 
-// File uploading has been completed
-final class StorageManagerUploadSuccess extends StorageManagerState {
-  final String downloadUrl;
+final class UploadTasks extends StorageManagerState {
+  final List<UploadTask> uploadTasks;
 
-  const StorageManagerUploadSuccess({
-    required this.downloadUrl,
-  });
+  const UploadTasks({required this.uploadTasks});
 
   @override
-  List<Object> get props => [downloadUrl];
+  List<Object> get props => [uploadTasks];
 }
